@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Scheme>
+    <MusicBand>
+        <coordinates>
+            <x>10.0</x>
+            <y>20</y>
+        </coordinates>
+        <creationDate>2024-03-25T10:15:30</creationDate>
+        <establishmentDate>2020-01-01T12:00+01:00</establishmentDate>
+        <frontMan/>
+        <id>1</id>
+        <name>Band1</name>
+        <numberOfParticipants>5</numberOfParticipants>
+        <singlesCount>10</singlesCount>
+    </MusicBand>
+    <MusicBand>
+        <coordinates>
+            <x>15.0</x>
+            <y>25</y>
+        </coordinates>
+        <creationDate>2024-03-25T11:30:45</creationDate>
+        <establishmentDate>2019-06-15T18:30+02:00</establishmentDate>
+        <frontMan/>
+        <id>2</id>
+        <name>Band2</name>
+        <numberOfParticipants>4</numberOfParticipants>
+        <singlesCount>8</singlesCount>
+    </MusicBand>
+</Scheme>
