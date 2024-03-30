@@ -6,13 +6,13 @@ import viancis.lab6.common.messages.Category;
 import viancis.lab6.common.messages.Message;
 import viancis.lab6.common.messages.Sender;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.InvocationTargetException; // TODO never used
 import java.util.HashMap;
 
 public class ComandBuilder {
 
 
-    public HashMap<String, InterfaceCommand> createCommands(Sender sender) {
+    public HashMap<String, InterfaceCommand> createCommands(Sender sender) { // WOW; мб тогда сканировать дирректорию lab6.common.commands и добавлять все классы оттуда, которые isinstance AbstractCommand
         HashMap<String, InterfaceCommand> commands = new HashMap<>();
 
         String[] commandClasses = {

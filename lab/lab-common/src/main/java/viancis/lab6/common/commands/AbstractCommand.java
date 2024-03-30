@@ -2,12 +2,13 @@ package viancis.lab6.common.commands;
 
 
 
-import viancis.lab6.common.models.Crud;
+import viancis.lab6.common.models.Crud; // TODO never used
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashMap; // TODO never used
+import java.util.Map; // TODO never used
 
+// TODO попробуй lombok
 public abstract class AbstractCommand implements InterfaceCommand {
     private final String name;
     private final String description;
@@ -22,7 +23,7 @@ public abstract class AbstractCommand implements InterfaceCommand {
     public final int args;
 
 
-    private int uniqueId = 1;
+    private int uniqueId = 1; 
 
 
     public AbstractCommand(String name, String description, int args) {
@@ -53,7 +54,7 @@ public abstract class AbstractCommand implements InterfaceCommand {
      */
     @Override
     public String toString() {
-        return name + " (" + description + ")";
+        return name + " (" + description + ")"; // TODO String.format("%s (%s)", name, description)
     }
 
 

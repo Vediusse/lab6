@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.PriorityQueue;
 
 public record Request(String command, String[] commandArgs, MusicBand element) implements Serializable {
+    public static PriorityQueue<MusicBand> priorityQueue;
+
     public static void setPriorityQueue(PriorityQueue<MusicBand> priorityQueue) {
         Request.priorityQueue = priorityQueue;
     }
@@ -13,9 +15,5 @@ public record Request(String command, String[] commandArgs, MusicBand element) i
     public static PriorityQueue<MusicBand> priorityQueue() {
         return priorityQueue;
     }
-
-    public static PriorityQueue<MusicBand> priorityQueue;
-
-
 
 }

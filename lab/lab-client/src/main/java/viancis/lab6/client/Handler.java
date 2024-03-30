@@ -42,6 +42,12 @@ public class Handler {
         ByteArrayInputStream byteStream = new ByteArrayInputStream(receivePacket.getData());
         ObjectInputStream objectStream = new ObjectInputStream(byteStream);
         return (Response) objectStream.readObject();
+        // return (Response) new ObjectInputStream(
+        //         new ByteArrayInputStream(
+        //             receivePacket.getData()
+        //        )).readObject();
+        // TODO
+        
     }
 
     public void close() {

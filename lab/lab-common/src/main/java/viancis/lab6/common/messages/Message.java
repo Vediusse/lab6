@@ -19,5 +19,6 @@ public class Message {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM HH:mm");
         String formattedTimestamp = timestamp.format(formatter);
         return "[" + category.getColorCode() + category.name() + "\u001B[0m] [" + formattedTimestamp + "] " + "\n" + message;
+        // TODO return String.format("[%s %s ] [%s] \n %s", category.getColorCode(), category.name(), formattedTimestamp, message)
     }
 }
