@@ -1,5 +1,5 @@
 package viancis.lab6.common.commands;
 
-public class Command {
+public class Command { // TODO ?
 
 }

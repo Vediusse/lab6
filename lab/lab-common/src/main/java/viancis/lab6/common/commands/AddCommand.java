@@ -1,7 +1,7 @@
 package viancis.lab6.common.commands;
 
 
-import viancis.lab6.common.communication.ClientInput;
+import viancis.lab6.common.communication.ClientInput; // TODO useless import
 import viancis.lab6.common.communication.Request;
 import viancis.lab6.common.communication.Response;
 import viancis.lab6.common.models.Crud;
@@ -26,6 +26,6 @@ public class AddCommand extends AbstractCommand {
                 return new Response(false, "Old collection is null", null);
             }
         }
-        return new Response(false, "Required " + args + " position argument");
+        return new Response(false, "Required " + args + " position argument"); // TODO String.format("Req %s pos args")
     }
 }

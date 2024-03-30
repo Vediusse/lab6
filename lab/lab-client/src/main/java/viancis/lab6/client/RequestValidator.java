@@ -1,6 +1,6 @@
 package viancis.lab6.client;
 
-import viancis.lab6.common.commands.AbstractCommand;
+import viancis.lab6.common.commands.AbstractCommand; // TODO useless import
 import viancis.lab6.common.commands.InterfaceCommand;
 import viancis.lab6.common.commands.builder.ComandBuilder;
 import viancis.lab6.common.communication.ClientInput;
@@ -41,7 +41,7 @@ public class RequestValidator {
         return new Request(userParse.command(), userParse.commandArgs(), null);
     }
 
-    public class NotEnoughArgumentException extends Throwable {
+    public class NotEnoughArgumentException extends Throwable { // TODO ошибки в отдельный пакет?
     }
 
     public class NullCommandException extends Throwable {

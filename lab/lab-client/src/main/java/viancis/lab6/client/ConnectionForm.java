@@ -25,10 +25,10 @@ public class ConnectionForm {
         sender.printMessage(new Message(Category.INFO, "Пожалуйста, введите адрес сервера в"
                 + " локальной сети с которым вы хотите работать"));
         this.connectionHandlerClient = this.askAdress();
-        sender.printMessage(new Message(Category.INFO, "Пожалуйста, введите порт сервера в"
+        sender.printMessage(new Message(Category.INFO, "Пожалуйста, введите порт сервера в" // TODO = "...порт сервера в с которым..."
                 + " с которым вы хотите работать"));
         this.askPortAndSet();
-        sender.printMessage(new Message(Category.SUCCESS, "Спасибо, блять большое ты правильно нахуй ввел ебучий текст"));
+        sender.printMessage(new Message(Category.SUCCESS, "Спасибо, блять большое ты правильно нахуй ввел ебучий текст")); // TODO lmao :lois
         return connectionHandlerClient;
     }
 
@@ -45,8 +45,8 @@ public class ConnectionForm {
         } catch (SocketException e) {
             sender.printMessage(new Message(Category.ERROR, "Адрес в сети найден"));
             this.askAdress();
-        } catch (NoSuchElementException e) {
-            return null;
+        } catch (NoSuchElementException e) { // TODO ??
+            return null; 
         }
         return null;
     }

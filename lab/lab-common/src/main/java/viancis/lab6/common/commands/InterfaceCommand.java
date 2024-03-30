@@ -1,6 +1,6 @@
 package viancis.lab6.common.commands;
 
-import viancis.lab6.common.communication.ClientInput;
+import viancis.lab6.common.communication.ClientInput; // TODO useless import
 import viancis.lab6.common.communication.Request;
 import viancis.lab6.common.communication.Response;
 

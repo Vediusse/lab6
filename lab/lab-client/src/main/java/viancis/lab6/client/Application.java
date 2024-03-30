@@ -18,7 +18,7 @@ public class Application {
 
     private final Sender sender = new Sender(System.out);
 
-    private final RequestValidator commandValidator = new RequestValidator(sender);
+    private final RequestValidator commandValidator = new RequestValidator(sender); // TODO not used
     private boolean listeningAndSendingModeOn = true;
 
     private ClientInput clientInput = new ClientInput(System.in);
@@ -74,11 +74,11 @@ public class Application {
         }
     }
 
-    private void handleNullCommand() {
+    private void handleNullCommand() { // TODO never used. используй лучше функ интерфейс "() -> {}"
         // Ничего не делать, просто продолжить ожидание команды
     }
 
-    private void handleExecuteScriptCommand() {
+    private void handleExecuteScriptCommand() { // TODO never used
         sender.printMessage(new Message(Category.INFO, "Команда выполнения скрипта еще не реализована"));
     }
 

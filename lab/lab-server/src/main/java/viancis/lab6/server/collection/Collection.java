@@ -3,10 +3,12 @@ package viancis.lab6.server.collection;
 import viancis.lab6.common.models.MusicBand;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementWrapper; // TODO useless import
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.PriorityQueue;
 
+
+// TODO попробуй lombok
 
 @XmlRootElement(name = "Scheme")
 public class Collection {

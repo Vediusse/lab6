@@ -172,7 +172,7 @@ public class MusicBand implements Comparable<MusicBand> , Serializable {
             Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
         } else {
-            return "\tnull,";
+            return "\tnull,"; // TODO оно может быть null?
         }
     }
 
@@ -180,7 +180,7 @@ public class MusicBand implements Comparable<MusicBand> , Serializable {
         if (zonedDateTime != null) {
             return zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z"));
         } else {
-            return "\tnull,";
+            return "\tnull,"; // TODO оно может быть null?
         }
     }
 

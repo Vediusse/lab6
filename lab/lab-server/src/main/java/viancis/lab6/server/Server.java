@@ -9,7 +9,7 @@ import viancis.lab6.server.collection.Storage;
 import viancis.lab6.common.commands.builder.ComandBuilder;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.InvocationTargetException; // TODO useless import
 import java.util.HashMap;
 
 public final class Server {
@@ -26,7 +26,7 @@ public final class Server {
 
     public static void main(String[] args) {
         var sender = new Sender(System.out);
-        String path = "lab-server/src/main/java/viancis/lab6/server/file/default.xml";
+        String path = "lab-server/src/main/java/viancis/lab6/server/file/default.xml"; // TODO lab-server/resources/default.xml - ?
         try{
             var storageManager = new Storage(path);
             var collectionManager = new Collection(storageManager.readCollection());
@@ -44,11 +44,11 @@ public final class Server {
         } catch (IOException | IllegalArgumentException e) {
             sender.printMessage(new Message(Category.ERROR,"Ошибка"));
         } finally {
-            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
+            sender.printMessage(new Message(Category.ERROR,"Ошибка")); // TODO в чем смысл тогда...
         }
 
     }
-    private static String getPath() {
+    private static String getPath() { // TODO never used localy
         var path = System.getenv(ENV_NAME);
         if (path == null) {
             System.exit(1);

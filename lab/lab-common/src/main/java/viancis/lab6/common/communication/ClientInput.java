@@ -1,13 +1,13 @@
 package viancis.lab6.common.communication;
 
-import viancis.lab6.common.models.MusicBand;
+import viancis.lab6.common.models.MusicBand; // TODO useless import
 import viancis.lab6.common.util.SplitterCommand;
 
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.InputStream; 
+import java.io.Serializable; // TODO useless import
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
+import java.util.PriorityQueue; // TODO useless import
 import java.util.Scanner;
 
 /**
@@ -25,7 +25,7 @@ public class ClientInput {
     }
 
     public UserParseCommand getParsedCommand() {
-        try {
+        try { 
             SplitterCommand splitter = new SplitterCommand();
             System.out.print(">> ");
             String line = scanner.nextLine();
