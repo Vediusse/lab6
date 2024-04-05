@@ -1,12 +1,12 @@
 package viancis.lab6.common.models;
 
 import javafx.beans.property.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-import java.io.Serializable;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,28 +16,61 @@ import java.util.Date;
 
 
 @XmlRootElement(name = "MusicBand")
-public class MusicBand implements Comparable<MusicBand> , Serializable {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"id", "name", "coordinates", "creationDate", "numberOfParticipants", "singlesCount", "establishmentDate", "genre", "frontMan"})
+public class MusicBand implements Comparable<MusicBand>, Serializable {
     public static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
     private static int lastId = 0;
 
-    private transient final StringProperty name = new SimpleStringProperty();
-    private transient final IntegerProperty id = new SimpleIntegerProperty();
-    private transient ObjectProperty<Coordinates> coordinates = new SimpleObjectProperty<>();
-    private transient ObjectProperty<LocalDateTime> creationDate = new SimpleObjectProperty<>();;
-    private transient IntegerProperty numberOfParticipants = new SimpleIntegerProperty();
-    private transient LongProperty singlesCount = new SimpleLongProperty();
-    private transient ObjectProperty<ZonedDateTime> establishmentDate = new SimpleObjectProperty<>();
-    private transient ObjectProperty<MusicGenre> genre = new SimpleObjectProperty<>();
-    private transient ObjectProperty<Person> frontMan = new SimpleObjectProperty<>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @XmlElement(required = true)
+    private int id;
+
+    @XmlElement(required = true)
+    private String name;
+
+    @XmlElement(required = true)
+    private Coordinates coordinates;
+
+    @XmlElement(required = true)
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    private LocalDateTime creationDate;
+
+    @XmlElement(required = true)
+    private Integer numberOfParticipants;
+
+    @XmlElement(required = true)
+    private long singlesCount;
+
+    @XmlElement(required = true)
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
+    private ZonedDateTime establishmentDate;
+
+    @XmlElement(required = true)
+    private MusicGenre genre;
+
+    @XmlElement
+    private Person frontMan;
+
 
     public MusicBand() {
-        this.id.set(generateUniqueID());
-        this.creationDate.set(LocalDateTime.now());
-        this.coordinates.set(new Coordinates());
+        this.id = generateUniqueID();
+        this.creationDate = LocalDateTime.now();
+        this.coordinates = new Coordinates();
     }
 
-    public MusicBand(String name, Long x, Double y, Integer numberOfParticipants, long singlesCount, MusicGenre genre, ZonedDateTime establishmentDate) {
-        this();
+    public MusicBand(String name, Double x, Long y, Integer numberOfParticipants, long singlesCount, MusicGenre genre, ZonedDateTime establishmentDate, Person frontMan) {
+        this(name, x, y, numberOfParticipants, singlesCount, genre, establishmentDate);
+        this.frontMan = frontMan;
+    }
+
+
+    public MusicBand(String name, Double x, Long y, Integer numberOfParticipants, long singlesCount, MusicGenre genre, ZonedDateTime establishmentDate) {
+        this.id = generateUniqueID();
+        this.creationDate = LocalDateTime.now();
+        this.coordinates = new Coordinates(x, y);
         this.setName(name);
         this.setNumberOfParticipants(numberOfParticipants);
         this.setSinglesCount(singlesCount);
@@ -45,104 +78,111 @@ public class MusicBand implements Comparable<MusicBand> , Serializable {
         this.setEstablishmentDate(establishmentDate);
     }
 
-    public MusicBand(String name, Long x, Double y, Integer numberOfParticipants, long singlesCount, MusicGenre genre, ZonedDateTime establishmentDate, Person frontMan) {
-        this(name, x, y, numberOfParticipants, singlesCount, genre, establishmentDate);
-        this.setFrontMan(frontMan);
-    }
 
     private int generateUniqueID() {
         return ++lastId;
     }
+
 
     @Override
     public int compareTo(MusicBand other) {
         return Integer.compare(this.getId(), other.getId());
     }
 
-    public String getName() {
-        return name.get();
-    }
-
-    @XmlElement(name = "creationDate")
-    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate.set(creationDate);
-    }
-
-
-    @XmlElement(name = "name")
-    public void setName(String name) {
-        this.name.set(name);
-    }
-
     public int getId() {
-        return id.get();
+        return id;
     }
 
-    @XmlElement(name = "id")
     public void setId(int id) {
-        this.id.set(id);
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID should be greater than 0");
+        }
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        this.name = name;
     }
 
     public Coordinates getCoordinates() {
-        return coordinates.get();
+        return coordinates;
     }
 
-    @XmlElement(name = "coordinates")
     public void setCoordinates(Coordinates coordinates) {
-        this.coordinates.set(coordinates);
+        if (coordinates == null) {
+            throw new IllegalArgumentException("Coordinates cannot be null");
+        }
+        this.coordinates = coordinates;
     }
 
     public LocalDateTime getCreationDate() {
-        return creationDate.get();
+        return creationDate;
     }
 
-
-    public int getNumberOfParticipants() {
-        return numberOfParticipants.get();
+    public void setCreationDate(LocalDateTime creationDate) {
+        if (creationDate == null) {
+            throw new IllegalArgumentException("Creation date cannot be null");
+        }
+        this.creationDate = creationDate;
     }
 
-    @XmlElement(name = "numberOfParticipants")
-    public void setNumberOfParticipants(int numberOfParticipants) {
-        this.numberOfParticipants.set(numberOfParticipants);
+    public Integer getNumberOfParticipants() {
+        return numberOfParticipants;
+    }
+
+    public void setNumberOfParticipants(Integer numberOfParticipants) {
+        if (numberOfParticipants != null && numberOfParticipants <= 0) {
+            throw new IllegalArgumentException("Number of participants should be greater than 0");
+        }
+        this.numberOfParticipants = numberOfParticipants;
     }
 
     public long getSinglesCount() {
-        return singlesCount.get();
+        return singlesCount;
     }
 
-    @XmlElement(name = "singlesCount")
     public void setSinglesCount(long singlesCount) {
-        this.singlesCount.set(singlesCount);
+        if (singlesCount <= 0) {
+            throw new IllegalArgumentException("Singles count should be greater than 0");
+        }
+        this.singlesCount = singlesCount;
     }
 
     public ZonedDateTime getEstablishmentDate() {
-        return establishmentDate.get();
+        return establishmentDate;
     }
 
-    @XmlElement(name = "establishmentDate")
-    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
     public void setEstablishmentDate(ZonedDateTime establishmentDate) {
-        this.establishmentDate.set(establishmentDate);
+        if (establishmentDate == null) {
+            throw new IllegalArgumentException("Establishment date cannot be null");
+        }
+        this.establishmentDate = establishmentDate;
     }
-
 
     public MusicGenre getGenre() {
-        return genre.get();
+        return genre;
     }
 
-    @XmlElement(name = "genre")
     public void setGenre(MusicGenre genre) {
-        this.genre.set(genre);
+        if (genre == null) {
+            throw new IllegalArgumentException("Genre cannot be null");
+        }
+        this.genre = genre;
     }
 
     public Person getFrontMan() {
-        return frontMan.get();
+        return frontMan;
     }
 
-    @XmlElement(name = "frontMan")
     public void setFrontMan(Person frontMan) {
-        this.frontMan.set(frontMan);
+        this.frontMan = frontMan;
     }
 
     @Override

@@ -38,6 +38,18 @@ public class ClientInput {
         }
     }
 
+    public UserParseCommand getParsedCommand(String inputLine) {
+        try {
+            SplitterCommand splitter = new SplitterCommand();
+            String[] inputString = splitter.smartSplit(inputLine).toArray(new String[0]);
+            String commandName = inputString[0].toLowerCase();
+            String[] commandArgs = Arrays.copyOfRange(inputString, 1, inputString.length);
+            return new UserParseCommand(commandName, commandArgs);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
     public record UserParseCommand(String command, String[] commandArgs){
 
     }

@@ -1,23 +1,24 @@
 package viancis.lab6.server;
 
-import viancis.lab6.common.commands.InterfaceCommand;
 import viancis.lab6.common.messages.Category;
 import viancis.lab6.common.messages.Message;
 import viancis.lab6.common.messages.Sender;
 import viancis.lab6.server.collection.Collection;
 import viancis.lab6.server.collection.Storage;
-import viancis.lab6.common.commands.builder.ComandBuilder;
+import viancis.lab6.server.logger.CustomLogger;
+
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.io.InputStream;
 
 public final class Server {
-
     private static final int PORT = 9876;
-    private static final String ENV_NAME = "FILENAME";
+    private static final String ENV_NAME = "/logs/log.logs";
+    private static final String PATH = "/file/default.xml";
 
     private static final Sender sender = new Sender(System.out);
+
+    private static final CustomLogger logger = new CustomLogger();
 
 
     private Server() {
@@ -25,39 +26,33 @@ public final class Server {
     }
 
     public static void main(String[] args) {
-        var sender = new Sender(System.out);
-        String path = "lab-server/src/main/java/viancis/lab6/server/file/default.xml";
+        Sender sender = new Sender(System.out);
+
         try{
-            var storageManager = new Storage(path);
-            var collectionManager = new Collection(storageManager.readCollection());
+            InputStream resourceStream = Server.class.getResourceAsStream(PATH);
+            if (resourceStream == null) {
+                throw new IOException("Resource not found: " + PATH);
+            }
+            Storage storageManager = new Storage(resourceStream);
+            Collection collectionManager = new Collection(storageManager.readCollection(), storageManager);
             Runtime.getRuntime().addShutdownHook(
                     new Thread(() -> {
-                        sender.printMessage(new Message(Category.SUCCESS,"не ошибка"));
+
                         try {
+                            sender.printMessage(new Message(Category.SUCCESS,"База данных была успешна сохранена - спасибо ты такой классный"));
+                            logger.logMessageToFile(Category.WARNING,"Даза Банных сохранена");
                             storageManager.writeCollection(collectionManager.getMusicBands());
+
                         } catch (IOException e) {
-                            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
+                            sender.printMessage(new Message(Category.ERROR,"Ошибка записи файла бд было утерено"));
                         }
                     }));
-            ServerHandler serverHandler = new ServerHandler(sender, createCommands(),collectionManager);
+            ServerHandler serverHandler = new ServerHandler(sender, collectionManager);
             serverHandler.handleRequests();
         } catch (IOException | IllegalArgumentException e) {
-            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
-        } finally {
-            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
+            sender.printMessage(new Message(Category.ERROR,"Ошибка чтения файла коллекция теперь пуста"));
         }
-
-    }
-    private static String getPath() {
-        var path = System.getenv(ENV_NAME);
-        if (path == null) {
-            System.exit(1);
-        }
-        return path;
     }
 
-    public static HashMap<String, InterfaceCommand> createCommands() {
-        ComandBuilder builder = new ComandBuilder();
-        return builder.createCommands(sender);
-    }
+
 }

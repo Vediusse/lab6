@@ -1,80 +1,91 @@
 package viancis.lab6.common.models;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
+import java.io.*;
 
 @XmlRootElement(name = "Person")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Person implements Serializable {
 
-    private final StringProperty frontManName = new SimpleStringProperty();
-    private final StringProperty eyeColor = new SimpleStringProperty();
-    private final StringProperty hairColor = new SimpleStringProperty();
-    private final StringProperty nationality = new SimpleStringProperty();
+    @Serial
+    private static final long serialVersionUID = 2L;
+
+    @XmlElement(required = true)
+    private String frontManName;
+
+    @XmlElement(required = true)
+    private Integer frontManHeight;
+
+    @XmlElement(required = true)
+    private Color eyeColor;
+
+    @XmlElement(required = true)
+    private Color hairColor;
+
+    @XmlElement(required = true)
+    private Country nationality;
 
     public Person() {
     }
 
     public Person(String frontManName, Integer frontManHeight, Color eyeColor, Color hairColor, Country nationality) {
-        this.frontManName.set(frontManName);
-        this.eyeColor.set(String.valueOf(eyeColor));
-        this.hairColor.set(String.valueOf(hairColor));
-        this.nationality.set(String.valueOf(nationality));
+        setName(frontManName);
+        setHeight(frontManHeight);
+        setEyeColor(eyeColor);
+        setHairColor(hairColor);
+        setNationality(nationality);
     }
 
-    public StringProperty frontManNameProperty() {
+    public String getName() {
         return frontManName;
     }
 
-    public String getFrontManName() {
-        return frontManName.get();
-    }
-
-    public void setFrontManName(String frontManName) {
-        if (frontManName == null || frontManName.isEmpty()) {
+    public void setName(String name) {
+        if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
-        this.frontManName.set(frontManName);
+        this.frontManName = name;
     }
 
-    public StringProperty eyeColorProperty() {
+    public Integer getHeight() {
+        return frontManHeight;
+    }
+
+    public void setHeight(Integer height) {
+        if (height != null && height <= 0) {
+            throw new IllegalArgumentException("Height should be greater than 0");
+        }
+        this.frontManHeight = height;
+    }
+
+    public Color getEyeColor() {
         return eyeColor;
     }
 
-    public String getEyeColor() {
-        return eyeColor.get();
+    public void setEyeColor(Color eyeColor) {
+        this.eyeColor = eyeColor;
     }
 
-    public void setEyeColor(String eyeColor) {
-        this.eyeColor.set(eyeColor);
-    }
-
-    public StringProperty hairColorProperty() {
+    public Color getHairColor() {
         return hairColor;
     }
 
-    public String getHairColor() {
-        return hairColor.get();
+    public void setHairColor(Color hairColor) {
+        this.hairColor = hairColor;
     }
 
-    public void setHairColor(String hairColor) {
-        this.hairColor.set(hairColor);
-    }
-
-    public StringProperty nationalityProperty() {
+    public Country getNationality() {
         return nationality;
     }
 
-    public String getNationality() {
-        return nationality.get();
-    }
-
-    public void setNationality(String nationality) {
-        if (nationality == null || nationality.isEmpty()) {
-            throw new IllegalArgumentException("Nationality cannot be null or empty");
+    public void setNationality(Country nationality) {
+        if (nationality == null) {
+            throw new IllegalArgumentException("Nationality cannot be null");
         }
-        this.nationality.set(nationality);
+        this.nationality = nationality;
     }
 
     @Override
@@ -86,7 +97,7 @@ public class Person implements Serializable {
                         \t\t\thairColor='%s',
                         \t\t\tnationality='%s'
                         \t\t""",
-                getFrontManName(), getEyeColor(), getHairColor(), getNationality());
+                getName(), getEyeColor(), getHairColor(), getNationality());
     }
 
 

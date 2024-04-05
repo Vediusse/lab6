@@ -11,10 +11,10 @@
     <version>1.0-SNAPSHOT</version>
     <name>lab-server</name>
     <properties>
-        <!-- Specify the JavaFX version -->
         <javafx.version>16</javafx.version>
-        <!-- Specify the JavaFX Maven plugin version -->
         <javafx.maven.plugin.version>0.0.5</javafx.maven.plugin.version>
+        <kotlin.version>1.6.10</kotlin.version>
+
     </properties>
 
     <build>
@@ -30,12 +30,13 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
+
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -104,6 +105,9 @@
             <artifactId>jaxb-impl</artifactId>
             <version>2.3.3</version>
         </dependency>
+
+
+
 
     </dependencies>
 

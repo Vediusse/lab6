@@ -27,13 +27,13 @@ public class MusicBandForm {
             validator.validateName(name, "Name");
 
             sender.printInLineMessage(new Message(Category.Input, "     Координата X: "));
-            Long x = Long.parseLong(getNonEmptyInput(scanner));
+            Double x = Double.parseDouble(getNonEmptyInput(scanner));
 
-            validator.validateLongNotNull(x, "X");
+            validator.validateDoubleNotNull(x, "X");
 
             sender.printInLineMessage(new Message(Category.Input, "     Координата Y: "));
-            Double y = Double.parseDouble(getNonEmptyInput(scanner));
-            validator.validateDoubleNotNull(y, "Y");
+            Long y = Long.parseLong(getNonEmptyInput(scanner));
+            validator.validateLongNotNull(y, "Y");
             validator.validateYValue(y);
 
             sender.printInLineMessage(new Message(Category.Input, "     Количество участников: "));
@@ -76,7 +76,7 @@ public class MusicBandForm {
             try {
                 input = scanner.nextLine().trim();
                 if (input.isEmpty()) {
-                    sender.printInLineMessage(new Message(Category.Input, "Please enter a non-empty value."));
+                    sender.printInLineMessage(new Message(Category.Input, "Please enter a non-empty value.\n"));
                     sender.printInLineMessage(new Message(Category.Input, "     "));
                 }
             } catch (NoSuchElementException e) {
@@ -212,7 +212,7 @@ public class MusicBandForm {
             String yString = scanner.next();
             if (yString != null) {
                 Long y = Long.parseLong(yString);
-                validator.validateYValue(Double.valueOf(y));
+                validator.validateYValue(y);
                 oldMusikBand.setCoordinates(new Coordinates(oldMusikBand.getCoordinates().getX(), y));
             }
 

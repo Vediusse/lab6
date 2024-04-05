@@ -3,6 +3,7 @@ package viancis.lab6.client;
 import viancis.lab6.common.communication.Response;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramSocket;
@@ -10,6 +11,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.net.DatagramPacket;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Handler {
 
@@ -34,15 +37,26 @@ public class Handler {
     }
 
     public Response receiveResponse() throws IOException, ClassNotFoundException {
-        byte[] receiveBuffer = new byte[BUFFER_SIZE];
+        byte[] sizeBuffer = new byte[BUFFER_SIZE];
+        DatagramPacket sizePacket = new DatagramPacket(sizeBuffer, sizeBuffer.length);
+        datagramSocket.receive(sizePacket);
+
+        int dataSize = ByteBuffer.wrap(sizeBuffer).getInt();
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        byte[] receiveBuffer = new byte[dataSize];
+
         DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
         datagramSocket.receive(receivePacket);
 
-        // Deserialize the received Response object
-        ByteArrayInputStream byteStream = new ByteArrayInputStream(receivePacket.getData());
-        ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+        byteStream.write(receiveBuffer, 0, dataSize);
+
+        byte[] actualData = byteStream.toByteArray();
+        ByteArrayInputStream byteInputStream = new ByteArrayInputStream(actualData);
+        ObjectInputStream objectStream = new ObjectInputStream(byteInputStream);
         return (Response) objectStream.readObject();
     }
+
 
     public void close() {
         datagramSocket.close();

@@ -1,38 +1,47 @@
 package viancis.lab6.server;
 
-import viancis.lab6.common.commands.InterfaceCommand;
-import viancis.lab6.common.communication.ClientInput;
+import viancis.lab6.common.commands.CommandType;
+import viancis.lab6.server.commands.InterfaceCommand;
 import viancis.lab6.common.communication.Response;
 import viancis.lab6.common.messages.Category;
 import viancis.lab6.common.messages.Message;
 import viancis.lab6.common.messages.Sender;
 import viancis.lab6.server.collection.Collection;
 import viancis.lab6.common.communication.Request;
+import viancis.lab6.server.commands.builder.ComandBuilder;
+import viancis.lab6.server.logger.CustomLogger;
 
 import java.io.*;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-class ServerHandler {
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+
+
+public class ServerHandler {
     private static final int BUFFER_SIZE = 65507;
     private final Collection collection;
-    private DatagramSocket socket;
-    private final Sender sender;
-    private final HashMap<String, InterfaceCommand> commandMap;
+    public DatagramSocket socket;
+    public final Sender sender;
+    private HashMap<String, InterfaceCommand> commandMap;
+    private static final String ENV_NAME = "/logs/log.logs";
+    private static final String PATH = "/file/default.xml";
 
-    public ServerHandler(Sender sender, HashMap<String, InterfaceCommand> commandMap, Collection collection) {
+    private final CustomLogger logger = new CustomLogger();
+
+    private HashMap<String,CommandType> commandTypeMap = null;
+
+    public ServerHandler(Sender sender, Collection collection) {
         this.socket = setSocket();
         this.sender = sender;
-        this.commandMap = commandMap;
+        this.createCommands();
         this.collection = collection;
     }
-    public DatagramSocket setSocket(){
+
+    public DatagramSocket setSocket() {
         try {
             return new DatagramSocket(9876);
         } catch (SocketException e) {
@@ -41,55 +50,75 @@ class ServerHandler {
         return null;
     }
 
+
     public void handleRequests() {
         while (true) {
             try {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
                 socket.receive(receivePacket);
-
                 ByteArrayInputStream byteStream = new ByteArrayInputStream(receivePacket.getData());
                 ObjectInputStream objectStream = new ObjectInputStream(byteStream);
-                Request receivedRequest = (Request) objectStream.readObject();
-                sender.printMessage(new Message(Category.WARNING, commandMap.toString()));
-                if (!receivedRequest.command().equalsIgnoreCase("execute_script") &&
-                        !receivedRequest.command().trim().isEmpty()) {
 
-                    InterfaceCommand command = commandMap.get(receivedRequest.command());
-                    if (command != null) {
-                        receivedRequest.setPriorityQueue(this.collection.getMusicBands());
-                        Response response = command.execute(receivedRequest);
-                        DatagramPacket responsePacket = getDatagramPacket(response, receivePacket);
-                        socket.send(responsePacket);
+                Request receivedRequest = (Request) objectStream.readObject();
+
+                if (!receivedRequest.command().equalsIgnoreCase("execute_script") && !receivedRequest.command().trim().isEmpty()) {
+                    if (receivedRequest.command().equalsIgnoreCase("commands")) {
+                        Response response = new Response("Available commands", true, this.commandTypeMap);
+                        sendResponse(response, receivePacket.getAddress(), receivePacket.getPort());
                     } else {
-                        sender.printMessage(new Message(Category.ERROR, "Command not found: " + receivedRequest.command()));
+                        InterfaceCommand command = commandMap.get(receivedRequest.command());
+                        if (command != null) {
+                            Response response = command.execute(receivedRequest, this.collection);
+                            sendResponse(response, receivePacket.getAddress(), receivePacket.getPort());
+                        } else {
+                            sender.printMessage(new Message(Category.WARNING, "Command not found: " + receivedRequest.command()));
+                            this.logger.logMessageToFile(Category.WARNING, "Command not found: " + receivedRequest.command());
+                        }
                     }
                 }
+            } catch (IOException | ClassNotFoundException e) {
+                this.logger.logMessageToFile(Category.WARNING, "IO error");
             } catch (Exception e) {
                 e.printStackTrace();
+                this.handleRequests();
             }
         }
     }
 
-    private static DatagramPacket getDatagramPacket(Response response, DatagramPacket receivePacket) throws IOException {
-        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream);
-        objectOutputStream.writeObject(response);
-        byte[] responseData = byteOutputStream.toByteArray();
-
-        DatagramPacket responsePacket = new DatagramPacket(responseData, responseData.length, receivePacket.getAddress(), receivePacket.getPort());
-        return responsePacket;
-    }
-
-
-    private void sendInfoMessage(InetAddress address, int port) {
+    private void sendResponse(Response response, InetAddress address, int port) {
         try {
-            String infoMessage = "INFO: Received and processed the message successfully";
-            byte[] infoData = infoMessage.getBytes();
-            DatagramPacket infoPacket = new DatagramPacket(infoData, infoData.length, address, port);
-            socket.send(infoPacket);
-        } catch (Exception e) {
+            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream);
+            objectOutputStream.writeObject(response);
+            objectOutputStream.flush();
+
+            byte[] responseData = byteOutputStream.toByteArray();
+            int dataSize = responseData.length;
+
+            ByteBuffer sizeBuffer = ByteBuffer.allocate(Integer.BYTES);
+            sizeBuffer.putInt(dataSize);
+            byte[] sizeData = sizeBuffer.array();
+            DatagramPacket sizePacket = new DatagramPacket(sizeData, sizeData.length, address, port);
+            socket.send(sizePacket);
+
+            DatagramPacket responsePacket = new DatagramPacket(responseData, dataSize, address, port);
+            socket.send(responsePacket);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private void close() {
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+        }
+    }
+
+    public void createCommands() {
+        ComandBuilder builder = new ComandBuilder();
+        this.commandMap = builder.createCommands(sender);
+        this.commandTypeMap = builder.getCommandType(sender);
+    }
+
 }

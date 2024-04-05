@@ -24,10 +24,10 @@ public class Validator {
     }
 
     public void validatePerson(Person person) {
-        String name = person.getFrontManName();
-        Color eyeColor = Color.valueOf(person.getEyeColor()); // Используйте метод valueOf для получения значения перечисления из строки
-        Color hairColor = Color.valueOf(person.getHairColor());
-        Country nationality = Country.valueOf(person.getNationality());
+        String name = person.getName();
+        Color eyeColor = person.getEyeColor(); // Используйте метод valueOf для получения значения перечисления из строки
+        Color hairColor = person.getHairColor();
+        Country nationality = person.getNationality();
 
         validateName(name, "Person name");
         validateColor(eyeColor, "Eye color");
@@ -39,7 +39,7 @@ public class Validator {
         validateNotNull(musicGenre, propertyName + " cannot be null");
     }
 
-    public void validateYValue(Double y) {
+    public void validateYValue(Long y) {
         if (y <= -263) {
             throw new IllegalArgumentException("Y value should be greater than -263");
         }

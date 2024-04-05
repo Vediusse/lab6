@@ -28,7 +28,7 @@ public class ConnectionForm {
         sender.printMessage(new Message(Category.INFO, "Пожалуйста, введите порт сервера в"
                 + " с которым вы хотите работать"));
         this.askPortAndSet();
-        sender.printMessage(new Message(Category.SUCCESS, "Спасибо, блять большое ты правильно нахуй ввел ебучий текст"));
+        sender.printMessage(new Message(Category.SUCCESS, "Спасибо, большое ты правильно ввел  текст"));
         return connectionHandlerClient;
     }
 
@@ -56,7 +56,7 @@ public class ConnectionForm {
             sender.printCommandPreview();
             String inputedPort = scanner.nextLine();
             int port = Integer.parseInt(inputedPort);
-            if (connectionHandlerClient != null) { // Проверяем, что объект не равен null
+            if (connectionHandlerClient != null) {
                 if (port >= 1 && port <= Config.getMaxPortValue()) {
                     connectionHandlerClient.setServerPort(port);
                 } else {
