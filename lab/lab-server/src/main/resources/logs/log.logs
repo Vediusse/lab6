@@ -1,0 +1,15 @@
+апр. 26, 2024 6:21:53 PM viancis.lab6.server.logger.CustomLogger logMessageToFile
+INFO: [WARNING] [26-04 18:21]
+Даза Банных сохранена
+апр. 26, 2024 7:06:30 PM viancis.lab6.server.logger.CustomLogger logMessageToFile
+INFO: [WARNING] [26-04 19:06]
+IO error
+апр. 27, 2024 9:37:40 PM viancis.lab6.server.logger.CustomLogger logMessageToFile
+INFO: [WARNING] [27-04 21:37]
+Даза Банных сохранена
+апр. 27, 2024 11:28:41 PM viancis.lab6.server.logger.CustomLogger logMessageToFile
+INFO: [WARNING] [27-04 23:28]
+IO error
+апр. 28, 2024 11:00:41 PM viancis.lab6.server.logger.CustomLogger logMessageToFile
+INFO: [WARNING] [28-04 23:00]
+Даза Банных сохранена

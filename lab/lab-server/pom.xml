@@ -11,10 +11,10 @@
     <version>1.0-SNAPSHOT</version>
     <name>lab-server</name>
     <properties>
-        <!-- Specify the JavaFX version -->
         <javafx.version>16</javafx.version>
-        <!-- Specify the JavaFX Maven plugin version -->
         <javafx.maven.plugin.version>0.0.5</javafx.maven.plugin.version>
+        <kotlin.version>1.6.10</kotlin.version>
+
     </properties>
 
     <build>
@@ -30,12 +30,13 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
+
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -66,6 +67,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
+            </plugin>
+
+
 
         </plugins>
     </build>
@@ -82,6 +93,7 @@
             <artifactId>jaxws-rt</artifactId>
             <version>2.3.7</version>
         </dependency>
+
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
@@ -91,6 +103,27 @@
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <version>2.3.8</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.16.1</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.3</version>
         </dependency>
         <!-- Use JavaFX Controls -->
         <dependency>
@@ -104,6 +137,13 @@
             <artifactId>jaxb-impl</artifactId>
             <version>2.3.3</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 

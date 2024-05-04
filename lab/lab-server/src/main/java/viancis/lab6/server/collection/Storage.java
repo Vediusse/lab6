@@ -1,82 +1,73 @@
 package viancis.lab6.server.collection;
 
-import viancis.lab6.common.models.MusicBand;
+import viancis.lab6.common.communication.Response;
+import viancis.lab6.common.models.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.PriorityQueue;
+
+import viancis.lab6.server.collection.Collection;
+import viancis.lab6.server.db.ConnectionBataDase;
+import viancis.lab6.server.db.ManagerDb;
+import viancis.lab6.server.db.RequestsDb;
 
 public class Storage {
 
-    private final String path;
+    public void addElement(PriorityQueue<MusicBand> collection, MusicBand element, User author) throws SQLException {
+        ManagerDb db = new ManagerDb(new ConnectionBataDase());
+        collection.add(element);
+        element.setAuthor(author);
+        db.addMusikBand(element, author);
 
-    public Storage(final String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path cannot be null");
-        }
-        if (path.isBlank()) {
-            throw new IllegalArgumentException("Path cannot be empty");
-        }
-        this.path = path;
+
+
     }
 
-
-    public PriorityQueue<MusicBand> readCollection() throws IOException {
-        var file = new File(path);
-        if (!file.exists()) {
-            if (!file.createNewFile()) {
-                throw new IOException("File can't be created");
+    public MusicBand getElementById(PriorityQueue<MusicBand> collection, long id) {
+        for (MusicBand element : collection) {
+            if (element.getId() == id) {
+                return element;
             }
         }
-        if (!file.isFile()) {
-            throw new IOException(path + " is not a valid file");
-        }
-        if (!file.canRead()) {
-            throw new IOException("File can't be read");
-        }
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Collection.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Collection collection = (Collection) jaxbUnmarshaller.unmarshal(file);
-            return collection.getMusicBands();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-
         return null;
     }
 
-    public void writeCollection(PriorityQueue<MusicBand> collection) throws IOException {
-        try {
-            File file = new File(path);
-            if (!file.exists()) {
-                if (!file.createNewFile()) {
-                    throw new IOException("File can't be created");
-                }
-            }
-            if (!file.isFile()) {
-                throw new IOException(path + " is not a valid file");
-            }
-            if (!file.canWrite()) {
-                throw new IOException("File can't be written");
-            }
-
-            JAXBContext jaxbContext = JAXBContext.newInstance(Collection.class);
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            Collection collectionObject = new Collection(collection);
-
-            marshaller.marshal(collectionObject, file);
-        } catch (JAXBException e) {
-            e.printStackTrace();
+    public MusicBand deleteElementById(PriorityQueue<MusicBand> collection, long id, User user) throws SQLException {
+        MusicBand elementToRemove = this.getElementById(collection, id);
+        if (Objects.equals(elementToRemove.getAuthor().getLogin(), user.getLogin())) {
+            collection.remove(elementToRemove);
+            ManagerDb db = new ManagerDb(new ConnectionBataDase());
+            db.deleteMusikBandById(elementToRemove.getId());
+            return elementToRemove;
         }
+        return null;
     }
 
+
+    public boolean updateElementById(PriorityQueue<MusicBand> collection, MusicBand oldElement, MusicBand updatedElement, User user) throws SQLException {
+        if(Objects.equals(oldElement.getAuthor().getLogin(), user.getLogin())){
+            boolean removed = collection.removeIf(band -> band.equals(oldElement));
+            if (removed) {
+
+                ManagerDb db = new ManagerDb(new ConnectionBataDase());
+                updatedElement.setAuthor(user);
+                collection.add(updatedElement);
+                long id = db.updateMusikBandById(oldElement.getId(), updatedElement);
+                updatedElement.setId(id);
+            }
+            return removed;
+        }
+        return false;
+    }
 
 
 }

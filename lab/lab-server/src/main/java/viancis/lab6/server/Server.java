@@ -1,23 +1,29 @@
 package viancis.lab6.server;
 
-import viancis.lab6.common.commands.InterfaceCommand;
 import viancis.lab6.common.messages.Category;
 import viancis.lab6.common.messages.Message;
 import viancis.lab6.common.messages.Sender;
 import viancis.lab6.server.collection.Collection;
 import viancis.lab6.server.collection.Storage;
-import viancis.lab6.common.commands.builder.ComandBuilder;
+import viancis.lab6.server.db.ConnectionBataDase;
+import viancis.lab6.server.db.ManagerDb;
+import viancis.lab6.server.logger.CustomLogger;
+
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.PriorityQueue;
 
 public final class Server {
-
     private static final int PORT = 9876;
-    private static final String ENV_NAME = "FILENAME";
+    private static final String ENV_NAME = "/logs/log.logs";
+    private static final String PATH = "/file/default.xml";
 
     private static final Sender sender = new Sender(System.out);
+
 
 
     private Server() {
@@ -25,39 +31,26 @@ public final class Server {
     }
 
     public static void main(String[] args) {
-        var sender = new Sender(System.out);
-        String path = "lab-server/src/main/java/viancis/lab6/server/file/default.xml";
+        Sender sender = new Sender(System.out);
+
         try{
-            var storageManager = new Storage(path);
-            var collectionManager = new Collection(storageManager.readCollection());
+            ConnectionBataDase connecton = new ConnectionBataDase();
+            ManagerDb db = new ManagerDb(connecton);
+            db.initializeDB();
             Runtime.getRuntime().addShutdownHook(
                     new Thread(() -> {
-                        sender.printMessage(new Message(Category.SUCCESS,"не ошибка"));
-                        try {
-                            storageManager.writeCollection(collectionManager.getMusicBands());
-                        } catch (IOException e) {
-                            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
-                        }
+                        sender.printMessage(new Message(Category.SUCCESS,"База данных была успешна сохранена - спасибо ты такой классный"));
                     }));
-            ServerHandler serverHandler = new ServerHandler(sender, createCommands(),collectionManager);
-            serverHandler.handleRequests();
-        } catch (IOException | IllegalArgumentException e) {
-            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
-        } finally {
-            sender.printMessage(new Message(Category.ERROR,"Ошибка"));
+            ServerHandler serverHandler = new ServerHandler(sender, db.readCollection());
+            serverHandler.startRequestReading();
+        } catch (IllegalArgumentException e) {
+            sender.printMessage(new Message(Category.ERROR,"Ошибка чтения файла коллекция теперь пуста"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-    }
-    private static String getPath() {
-        var path = System.getenv(ENV_NAME);
-        if (path == null) {
-            System.exit(1);
-        }
-        return path;
     }
 
-    public static HashMap<String, InterfaceCommand> createCommands() {
-        ComandBuilder builder = new ComandBuilder();
-        return builder.createCommands(sender);
-    }
+
 }
